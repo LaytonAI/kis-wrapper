@@ -96,9 +96,11 @@ dist/
 ```
 
 ## 완료 조건
-- [ ] pyproject.toml 생성
-- [ ] 디렉토리 구조 생성
-- [ ] KIS Excel 문서 다운로드
-- [ ] docs/ 폴더에 API 스펙 정리
-- [ ] .env.example 생성
-- [ ] uv sync 성공
+- [x] pyproject.toml 생성
+- [x] 디렉토리 구조 생성
+- [ ] KIS Excel 문서 다운로드 (manual)
+- [ ] docs/ 폴더에 API 스펙 정리 (manual)
+- [x] .env.example 생성
+- [x] uv sync 성공
+- [x] .claude/rules 설정
+- [x] /lint skill 생성
