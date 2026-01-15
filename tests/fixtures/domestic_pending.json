@@ -1,0 +1,16 @@
+[
+  {
+    "ord_gno_brno": "00000",
+    "odno": "0000123457",
+    "orgn_odno": "",
+    "ord_dvsn_name": "매수",
+    "pdno": "005930",
+    "prdt_name": "삼성전자",
+    "ord_qty": "20",
+    "ord_unpr": "69000",
+    "ord_tmd": "093000",
+    "tot_ccld_qty": "0",
+    "psbl_qty": "20",
+    "sll_buy_dvsn_cd": "02"
+  }
+]

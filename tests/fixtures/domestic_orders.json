@@ -1,0 +1,18 @@
+[
+  {
+    "ord_dt": "20250115",
+    "ord_gno_brno": "00000",
+    "odno": "0000123456",
+    "orgn_odno": "",
+    "ord_dvsn_name": "매수",
+    "sll_buy_dvsn_cd": "02",
+    "pdno": "005930",
+    "prdt_name": "삼성전자",
+    "ord_qty": "10",
+    "ord_unpr": "70000",
+    "ord_tmd": "092500",
+    "tot_ccld_qty": "10",
+    "tot_ccld_amt": "700000",
+    "ccld_cndt_name": "체결"
+  }
+]

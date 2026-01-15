@@ -1,0 +1,35 @@
+{
+  "output1": [
+    {
+      "pdno": "005930",
+      "prdt_name": "삼성전자",
+      "hldg_qty": "100",
+      "pchs_avg_pric": "68000.00",
+      "pchs_amt": "6800000",
+      "prpr": "70000",
+      "evlu_amt": "7000000",
+      "evlu_pfls_amt": "200000",
+      "evlu_pfls_rt": "2.94"
+    }
+  ],
+  "output2": [
+    {
+      "dnca_tot_amt": "10000000",
+      "nxdy_excc_amt": "10000000",
+      "prvs_rcdl_excc_amt": "10000000",
+      "cma_evlu_amt": "0",
+      "bfdy_buy_amt": "0",
+      "thdt_buy_amt": "0",
+      "nxdy_auto_rdpt_amt": "0",
+      "bfdy_sll_amt": "0",
+      "thdt_sll_amt": "0",
+      "d2_auto_rdpt_amt": "0",
+      "bfdy_tlex_amt": "0",
+      "thdt_tlex_amt": "0",
+      "tot_loan_amt": "0",
+      "scts_evlu_amt": "7000000",
+      "tot_evlu_amt": "17000000",
+      "nass_amt": "17000000"
+    }
+  ]
+}

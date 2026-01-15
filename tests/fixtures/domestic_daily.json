@@ -1,0 +1,22 @@
+[
+  {
+    "stck_bsop_date": "20250115",
+    "stck_oprc": "71000",
+    "stck_hgpr": "71500",
+    "stck_lwpr": "69500",
+    "stck_clpr": "70000",
+    "acml_vol": "12345678",
+    "prdy_vrss": "-1000",
+    "prdy_vrss_sign": "5"
+  },
+  {
+    "stck_bsop_date": "20250114",
+    "stck_oprc": "70500",
+    "stck_hgpr": "72000",
+    "stck_lwpr": "70000",
+    "stck_clpr": "71000",
+    "acml_vol": "10234567",
+    "prdy_vrss": "500",
+    "prdy_vrss_sign": "2"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "askp1": "70100",
+  "askp2": "70200",
+  "askp3": "70300",
+  "bidp1": "70000",
+  "bidp2": "69900",
+  "bidp3": "69800",
+  "askp_rsqn1": "1000",
+  "askp_rsqn2": "2000",
+  "askp_rsqn3": "3000",
+  "bidp_rsqn1": "1500",
+  "bidp_rsqn2": "2500",
+  "bidp_rsqn3": "3500",
+  "total_askp_rsqn": "50000",
+  "total_bidp_rsqn": "60000"
+}

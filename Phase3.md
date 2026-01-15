@@ -268,10 +268,10 @@ def pending_orders(kis: KIS) -> list[dict]:
 ```
 
 ## 완료 조건
-- [ ] test_domestic.py 시세 테스트 작성/통과
-- [ ] price(), orderbook(), daily() 구현
-- [ ] test_domestic.py 주문 테스트 작성/통과
-- [ ] buy(), sell(), cancel(), modify() 구현
-- [ ] test_domestic.py 계좌 테스트 작성/통과
-- [ ] balance(), positions(), orders() 구현
+- [x] test_domestic.py 시세 테스트 작성/통과
+- [x] price(), orderbook(), daily() 구현
+- [x] test_domestic.py 주문 테스트 작성/통과
+- [x] buy(), sell(), cancel(), modify() 구현
+- [x] test_domestic.py 계좌 테스트 작성/통과
+- [x] balance(), positions(), orders(), pending_orders() 구현
 - [ ] 모의투자에서 전체 플로우 테스트
