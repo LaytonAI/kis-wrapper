@@ -251,10 +251,10 @@ def kis():
 ```
 
 ## 완료 조건
-- [ ] test_snapshot.py 작성/통과
-- [ ] snapshot.py 구현
-- [ ] test_calc.py 작성/통과
-- [ ] calc.py 구현
-- [ ] fixtures 디렉토리 구조 생성
-- [ ] update_fixtures.py 스크립트 작성
-- [ ] conftest.py fixture 설정
+- [x] test_snapshot.py 작성/통과
+- [x] snapshot.py 구현
+- [x] test_calc.py 작성/통과
+- [x] calc.py 구현
+- [x] fixtures 디렉토리 구조 생성
+- [x] update_fixtures.py 스크립트 작성
+- [x] conftest.py fixture 설정

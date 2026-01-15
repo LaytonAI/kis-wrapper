@@ -1,0 +1,24 @@
+{
+  "output1": [
+    {
+      "pdno": "005930",
+      "prdt_name": "삼성전자",
+      "hldg_qty": "100",
+      "pchs_avg_pric": "70000.00",
+      "prpr": "71000",
+      "pchs_amt": "7000000",
+      "evlu_amt": "7100000",
+      "evlu_pfls_amt": "100000",
+      "evlu_pfls_rt": "1.43"
+    }
+  ],
+  "output2": [
+    {
+      "dnca_tot_amt": "10000000",
+      "tot_evlu_amt": "17100000",
+      "pchs_amt_smtl_amt": "7000000",
+      "evlu_amt_smtl_amt": "7100000",
+      "evlu_pfls_smtl_amt": "100000"
+    }
+  ]
+}
