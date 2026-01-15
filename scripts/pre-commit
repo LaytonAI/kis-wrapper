@@ -1,0 +1,18 @@
+#!/bin/sh
+# 테스트 실패 시 커밋 차단
+
+echo "Running tests..."
+uv run pytest -q
+if [ $? -ne 0 ]; then
+    echo "❌ Tests failed. Commit aborted."
+    exit 1
+fi
+
+echo "Running lint..."
+uv run ruff check kis/ tests/
+if [ $? -ne 0 ]; then
+    echo "❌ Lint failed. Commit aborted."
+    exit 1
+fi
+
+echo "✅ All checks passed."

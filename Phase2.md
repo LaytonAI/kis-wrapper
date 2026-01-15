@@ -206,9 +206,9 @@ OrderType = Literal["limit", "market"]
 ```
 
 ## 완료 조건
-- [ ] test_auth.py 작성 및 통과
-- [ ] auth.py 구현
-- [ ] test_client.py 작성 및 통과
-- [ ] client.py 구현
-- [ ] types.py 기본 타입 정의
+- [x] test_auth.py 작성 및 통과
+- [x] auth.py 구현
+- [x] test_client.py 작성 및 통과
+- [x] client.py 구현
+- [x] types.py 기본 타입 정의
 - [ ] 모의투자 환경에서 토큰 발급 테스트

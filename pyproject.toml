@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-asyncio", "ruff", "mypy"]
+dev = ["pytest", "pytest-asyncio", "pytest-httpx", "ruff", "mypy"]
 
 [build-system]
 requires = ["hatchling"]
