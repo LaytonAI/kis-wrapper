@@ -201,3 +201,53 @@ def test_balance_uses_paper_tr_id(kis, httpx_mock):
     domestic.balance(kis)
 
     assert httpx_mock.get_request().headers["tr_id"] == "VTTC8434R"
+
+
+# === 포지션 관리 테스트 ===
+
+
+def test_position_found(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("domestic_balance.json")})
+
+    pos = domestic.position(kis, "005930")
+
+    assert pos["symbol"] == "005930"
+    assert pos["qty"] == 100
+    assert pos["avg_price"] == 68000
+    assert pos["profit_rate"] == 2.94
+
+
+def test_position_not_found(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("domestic_balance.json")})
+
+    assert domestic.position(kis, "999999") is None
+
+
+def test_sell_all_success(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("domestic_balance.json")})
+    httpx_mock.add_response(json={"rt_cd": "0", "output": {"ODNO": "123"}})
+
+    result = domestic.sell_all(kis, "005930")
+
+    requests = httpx_mock.get_requests()
+    sell_body = json.loads(requests[1].content)
+    assert sell_body["ORD_QTY"] == "100"
+    assert result["ODNO"] == "123"
+
+
+def test_sell_all_no_position_raises(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": {"output1": [], "output2": []}})
+
+    with pytest.raises(ValueError, match="No position"):
+        domestic.sell_all(kis, "005930")
+
+
+def test_cancel_remaining(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": {"ODNO": "123"}})
+
+    domestic.cancel_remaining(kis, "0000123456")
+
+    body = json.loads(httpx_mock.get_request().content)
+    assert body["ORGN_ODNO"] == "0000123456"
+    assert body["RVSE_CNCL_DVSN_CD"] == "02"
+    assert body["QTY_ALL_ORD_YN"] == "Y"

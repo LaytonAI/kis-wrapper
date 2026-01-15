@@ -52,6 +52,7 @@ kis_prod = kis.switch("prod")
 - [Phase1.md](./Phase1.md) - 프로젝트 초기화 + 문서 수집
 - [Phase2.md](./Phase2.md) - Core (auth, client)
 - [Phase3.md](./Phase3.md) - 국내주식 API
+- [Phase3.5.md](./Phase3.5.md) - 유틸리티 및 포지션 관리
 - [Phase4.md](./Phase4.md) - 데이터 무결성
 - [Phase5.md](./Phase5.md) - WebSocket
 - [Phase6.md](./Phase6.md) - 해외주식

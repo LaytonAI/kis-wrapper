@@ -173,3 +173,50 @@ def pending_orders(kis: KIS) -> list[dict]:
         _tr_id(kis, "VTTC8036R", "TTTC8036R"),
     )
     return result if isinstance(result, list) else []
+
+
+# === 포지션 관리 ===
+
+
+def position(kis: KIS, symbol: str) -> dict | None:
+    """종목별 포지션 조회 (미보유 시 None)"""
+    p = next((p for p in positions(kis) if p["pdno"] == symbol), None)
+    if not p:
+        return None
+    return {
+        "symbol": symbol,
+        "name": p["prdt_name"],
+        "qty": int(p["hldg_qty"]),
+        "avg_price": int(float(p["pchs_avg_pric"])),
+        "current_price": int(p["prpr"]),
+        "total_cost": int(p["pchs_amt"]),
+        "eval_amount": int(p["evlu_amt"]),
+        "profit": int(p["evlu_pfls_amt"]),
+        "profit_rate": float(p["evlu_pfls_rt"]),
+    }
+
+
+def sell_all(kis: KIS, symbol: str) -> dict:
+    """종목 전량 매도 (시장가)"""
+    p = next((p for p in positions(kis) if p["pdno"] == symbol), None)
+    if not p or int(p["hldg_qty"]) == 0:
+        raise ValueError(f"No position for {symbol}")
+    return sell(kis, symbol, qty=int(p["hldg_qty"]))
+
+
+def cancel_remaining(kis: KIS, order_no: str) -> dict:
+    """미체결 잔량 전부 취소"""
+    return kis.post(
+        "/uapi/domestic-stock/v1/trading/order-rvsecncl",
+        {
+            **_account_params(kis),
+            "KRX_FWDG_ORD_ORGNO": "",
+            "ORGN_ODNO": order_no,
+            "ORD_DVSN": "00",
+            "RVSE_CNCL_DVSN_CD": "02",
+            "ORD_QTY": "0",
+            "ORD_UNPR": "0",
+            "QTY_ALL_ORD_YN": "Y",
+        },
+        _tr_id(kis, "VTTC0803U", "TTTC0803U"),
+    )
