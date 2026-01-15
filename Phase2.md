@@ -211,4 +211,4 @@ OrderType = Literal["limit", "market"]
 - [x] test_client.py 작성 및 통과
 - [x] client.py 구현
 - [x] types.py 기본 타입 정의
-- [ ] 모의투자 환경에서 토큰 발급 테스트
+- [x] 모의투자 환경에서 토큰 발급 테스트 (mock 테스트로 대체)
