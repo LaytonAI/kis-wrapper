@@ -304,8 +304,8 @@ def test_buy_tr_id_for_nasdaq():
 - 기타: 거래소별 상이
 
 ## 완료 조건
-- [ ] test_overseas.py 작성/통과
-- [ ] overseas.py 구현
-- [ ] 미국주식 시세/주문 테스트
-- [ ] 거래소별 TR ID 매핑 검증
-- [ ] 환율 조회 테스트
+- [x] test_overseas.py 작성/통과
+- [x] overseas.py 구현
+- [x] 미국주식 시세/주문 테스트
+- [x] 거래소별 TR ID 매핑 검증
+- [x] 환율 조회 테스트

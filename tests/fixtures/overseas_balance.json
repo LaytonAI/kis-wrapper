@@ -1,0 +1,18 @@
+{
+  "output1": [
+    {
+      "ovrs_pdno": "AAPL",
+      "ovrs_item_name": "APPLE INC",
+      "frcr_evlu_pfls_amt": "50.00",
+      "evlu_pfls_rt": "3.45",
+      "pchs_avg_pric": "145.00",
+      "ovrs_cblc_qty": "10",
+      "ovrs_stck_evlu_amt": "1502.50",
+      "now_pric2": "150.25"
+    }
+  ],
+  "output2": {
+    "tot_evlu_pfls_amt": "50.00",
+    "frcr_buy_amt_smtl1": "1450.00"
+  }
+}
