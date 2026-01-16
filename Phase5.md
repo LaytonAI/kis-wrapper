@@ -324,8 +324,8 @@ def test_parse_data_h0stcnt0(ws_client):
 | HDFSASP0 | 해외주식 실시간호가 | |
 
 ## 완료 조건
-- [ ] test_ws.py 작성/통과
-- [ ] ws.py 구현
-- [ ] 국내주식 실시간체결 테스트
-- [ ] 자동 재연결 테스트
-- [ ] AES 복호화 테스트
+- [x] test_ws.py 작성/통과
+- [x] ws.py 구현
+- [x] 국내주식 실시간체결 테스트
+- [x] 자동 재연결 테스트
+- [x] AES 복호화 테스트
