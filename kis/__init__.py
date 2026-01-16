@@ -7,10 +7,12 @@ from kis.client import KIS
 from kis.errors import (
     AccessDeniedError,
     AuthError,
+    CircuitBreakerError,
     GatewayError,
     InsufficientBalanceError,
     KISError,
     MarketClosedError,
+    NetworkError,
     OrderError,
     RateLimitError,
     SubscribeError,
@@ -30,7 +32,7 @@ __all__ = [
     "domestic", "overseas", "calc", "snapshot",
     # Errors - Gateway (EGW)
     "KISError", "GatewayError", "AuthError", "TokenExpiredError",
-    "RateLimitError", "AccessDeniedError",
+    "RateLimitError", "NetworkError", "CircuitBreakerError", "AccessDeniedError",
     # Errors - Business (APBK)
     "OrderError", "SymbolError", "MarketClosedError", "InsufficientBalanceError",
     # Errors - WebSocket (OPSP)

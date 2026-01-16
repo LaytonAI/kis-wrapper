@@ -21,6 +21,14 @@ class RateLimitError(GatewayError):
     pass
 
 
+class NetworkError(GatewayError):
+    pass
+
+
+class CircuitBreakerError(GatewayError):
+    pass
+
+
 class AccessDeniedError(GatewayError):
     pass
 

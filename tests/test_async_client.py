@@ -11,8 +11,10 @@ from kis.errors import KISError, RateLimitError
 def test_init_and_switch():
     kis = AsyncKIS("key", "secret", "12345678-01")
     assert kis.is_paper and kis.max_retries == 3 and kis.retry_delay == 1.0
+    assert kis.throttle_rate == 20 and kis.cb_threshold == 5
     prod = kis.switch("prod")
     assert not prod.is_paper and prod.app_key == kis.app_key
+    assert prod.throttle_rate == kis.throttle_rate
 
 
 @pytest.mark.asyncio
