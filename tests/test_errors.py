@@ -27,95 +27,48 @@ def test_kis_error_attributes():
     assert "[TEST001] 테스트 에러" in str(err)
 
 
-def test_gateway_error_inheritance():
-    """Gateway 에러 계층 (EGW)"""
+def test_error_inheritance():
+    """에러 계층 구조"""
+    # Gateway (EGW)
     assert issubclass(GatewayError, KISError)
     assert issubclass(AuthError, GatewayError)
     assert issubclass(TokenExpiredError, AuthError)
     assert issubclass(RateLimitError, GatewayError)
     assert issubclass(AccessDeniedError, GatewayError)
-
-
-def test_business_error_inheritance():
-    """업무 에러 계층 (APBK)"""
+    # Business (APBK)
     assert issubclass(OrderError, KISError)
     assert issubclass(SymbolError, KISError)
     assert issubclass(MarketClosedError, KISError)
     assert issubclass(InsufficientBalanceError, KISError)
-
-
-def test_websocket_error_inheritance():
-    """WebSocket 에러 계층 (OPSP)"""
+    # WebSocket (OPSP)
     assert issubclass(WebSocketError, KISError)
     assert issubclass(SubscribeError, WebSocketError)
 
 
-def test_raise_for_code_known_error():
-    with pytest.raises(TokenExpiredError) as exc:
-        raise_for_code("EGW00123", "토큰 만료")
-    assert exc.value.code == "EGW00123"
-    assert exc.value.message == "토큰 만료"
+@pytest.mark.parametrize("code,error_class", [
+    ("EGW00123", TokenExpiredError),
+    ("EGW00201", RateLimitError),
+    ("EGW00003", AccessDeniedError),
+    ("APBK0919", OrderError),
+    ("APBK0656", InsufficientBalanceError),
+    ("APBK0013", SymbolError),
+    ("APBK1058", MarketClosedError),
+    ("OPSP0008", SubscribeError),
+])
+def test_raise_for_code(code, error_class):
+    with pytest.raises(error_class) as exc:
+        raise_for_code(code, "test")
+    assert exc.value.code == code
 
 
-def test_raise_for_code_order_error():
-    with pytest.raises(OrderError):
-        raise_for_code("APBK0919", "주문수량 초과")
-
-
-def test_raise_for_code_insufficient_balance():
-    with pytest.raises(InsufficientBalanceError):
-        raise_for_code("APBK0656", "매수가능금액 부족")
-
-
-def test_raise_for_code_symbol_error():
-    with pytest.raises(SymbolError):
-        raise_for_code("APBK0013", "종목코드 오류")
-
-
-def test_raise_for_code_market_closed():
-    with pytest.raises(MarketClosedError):
-        raise_for_code("APBK1058", "주문가능시간 아님")
-
-
-def test_raise_for_code_unknown_error():
+def test_raise_for_code_unknown():
     with pytest.raises(KISError) as exc:
         raise_for_code("UNKNOWN", "알 수 없는 에러")
     assert exc.value.code == "UNKNOWN"
     assert type(exc.value) is KISError
 
 
-def test_error_map_has_expected_codes():
-    assert "EGW00123" in ERROR_MAP
-    assert "APBK0656" in ERROR_MAP
-    assert "APBK0013" in ERROR_MAP
-
-
-def test_rate_limit_error():
-    err = RateLimitError("429", "API 호출 한도 초과")
-    assert err.code == "429"
-    assert "429" in str(err)
-
-
-def test_raise_for_code_rate_limit():
-    with pytest.raises(RateLimitError):
-        raise_for_code("EGW00201", "초당 거래건수 초과")
-
-
-def test_raise_for_code_access_denied():
-    with pytest.raises(AccessDeniedError):
-        raise_for_code("EGW00003", "접근 거부")
-
-
-def test_raise_for_code_subscribe_error():
-    with pytest.raises(SubscribeError):
-        raise_for_code("OPSP0008", "최대 구독 초과")
-
-
-def test_error_map_has_gateway_codes():
-    assert "EGW00201" in ERROR_MAP  # Rate limit
-    assert "EGW00003" in ERROR_MAP  # Access denied
-
-
-def test_error_map_has_websocket_codes():
-    assert "OPSP0008" in ERROR_MAP  # Max subscribe
-    assert "OPSP8991" in ERROR_MAP  # Invalid tr_id
+def test_error_map_coverage():
+    expected = ["EGW00123", "EGW00201", "EGW00003", "APBK0656", "APBK0013", "OPSP0008", "OPSP8991"]
+    for code in expected:
+        assert code in ERROR_MAP
