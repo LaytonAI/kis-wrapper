@@ -57,6 +57,7 @@ kis_prod = kis.switch("prod")
 - [Phase5.md](./Phase5.md) - WebSocket
 - [Phase6.md](./Phase6.md) - 해외주식
 - [Phase7.md](./Phase7.md) - 문서화
+- [Phase8.md](./Phase8.md) - KIS API 완전 대응
 
 ## TDD 프로세스
 1. 테스트 먼저 작성
