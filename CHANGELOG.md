@@ -1,6 +1,25 @@
 # Changelog
 
-## [0.1.0] - 2024
+## [0.2.0] - 2025-01-16
+
+### Added
+- **에러 처리 강화**
+  - 공식 문서 기반 에러코드 체계 (EGW/OPSQ/OPSP/APBK)
+  - 계층적 에러 클래스 (KISError → GatewayError → AuthError 등)
+  - 429 Rate Limit 자동 재시도 (지수 백오프)
+
+- **해외주식 API 확장**
+  - 호가 조회 (orderbook)
+  - 주문 정정 (modify)
+  - 체결내역 조회 (orders)
+  - 미체결 조회 (pending_orders)
+  - 포지션 관리 (positions, position, sell_all)
+
+### Changed
+- 코드 단순화 및 최적화
+- 테스트 파라미터화로 중복 제거
+
+## [0.1.0] - 2025-01-16
 
 ### Added
 

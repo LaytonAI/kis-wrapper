@@ -1,4 +1,4 @@
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from kis import calc, domestic, overseas, snapshot
 from kis.auth import Env, get_token, get_ws_key
