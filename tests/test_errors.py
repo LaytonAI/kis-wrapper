@@ -4,14 +4,18 @@ import pytest
 
 from kis.errors import (
     ERROR_MAP,
+    AccessDeniedError,
     AuthError,
+    GatewayError,
     InsufficientBalanceError,
     KISError,
     MarketClosedError,
     OrderError,
     RateLimitError,
+    SubscribeError,
     SymbolError,
     TokenExpiredError,
+    WebSocketError,
     raise_for_code,
 )
 
@@ -23,14 +27,27 @@ def test_kis_error_attributes():
     assert "[TEST001] 테스트 에러" in str(err)
 
 
-def test_kis_error_inheritance():
-    assert issubclass(RateLimitError, KISError)
-    assert issubclass(AuthError, KISError)
+def test_gateway_error_inheritance():
+    """Gateway 에러 계층 (EGW)"""
+    assert issubclass(GatewayError, KISError)
+    assert issubclass(AuthError, GatewayError)
     assert issubclass(TokenExpiredError, AuthError)
+    assert issubclass(RateLimitError, GatewayError)
+    assert issubclass(AccessDeniedError, GatewayError)
+
+
+def test_business_error_inheritance():
+    """업무 에러 계층 (APBK)"""
     assert issubclass(OrderError, KISError)
     assert issubclass(SymbolError, KISError)
     assert issubclass(MarketClosedError, KISError)
     assert issubclass(InsufficientBalanceError, KISError)
+
+
+def test_websocket_error_inheritance():
+    """WebSocket 에러 계층 (OPSP)"""
+    assert issubclass(WebSocketError, KISError)
+    assert issubclass(SubscribeError, WebSocketError)
 
 
 def test_raise_for_code_known_error():
@@ -77,3 +94,28 @@ def test_rate_limit_error():
     err = RateLimitError("429", "API 호출 한도 초과")
     assert err.code == "429"
     assert "429" in str(err)
+
+
+def test_raise_for_code_rate_limit():
+    with pytest.raises(RateLimitError):
+        raise_for_code("EGW00201", "초당 거래건수 초과")
+
+
+def test_raise_for_code_access_denied():
+    with pytest.raises(AccessDeniedError):
+        raise_for_code("EGW00003", "접근 거부")
+
+
+def test_raise_for_code_subscribe_error():
+    with pytest.raises(SubscribeError):
+        raise_for_code("OPSP0008", "최대 구독 초과")
+
+
+def test_error_map_has_gateway_codes():
+    assert "EGW00201" in ERROR_MAP  # Rate limit
+    assert "EGW00003" in ERROR_MAP  # Access denied
+
+
+def test_error_map_has_websocket_codes():
+    assert "OPSP0008" in ERROR_MAP  # Max subscribe
+    assert "OPSP8991" in ERROR_MAP  # Invalid tr_id
