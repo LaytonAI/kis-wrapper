@@ -56,6 +56,7 @@ kis_prod = kis.switch("prod")
 - [Phase4.md](./Phase4.md) - 데이터 무결성
 - [Phase5.md](./Phase5.md) - WebSocket
 - [Phase6.md](./Phase6.md) - 해외주식
+- [Phase7.md](./Phase7.md) - 문서화
 
 ## TDD 프로세스
 1. 테스트 먼저 작성

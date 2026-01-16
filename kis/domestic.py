@@ -9,10 +9,6 @@ def _tr_id(kis: KIS, paper: str, real: str) -> str:
     return paper if kis.is_paper else real
 
 
-def _account_params(kis: KIS) -> dict:
-    return {"CANO": kis.account[:8], "ACNT_PRDT_CD": kis.account[9:11]}
-
-
 # === 시세 조회 ===
 
 
@@ -57,7 +53,7 @@ def _order(kis: KIS, symbol: str, qty: int, price: int | None, tr_paper: str, tr
     return kis.post(
         "/uapi/domestic-stock/v1/trading/order-cash",
         {
-            **_account_params(kis),
+            **kis.account_params,
             "PDNO": symbol,
             "ORD_DVSN": "01" if price is None else "00",
             "ORD_QTY": str(qty),
@@ -82,7 +78,7 @@ def _revise_cancel(kis: KIS, order_no: str, qty: int, price: int, dvsn_cd: str) 
     return kis.post(
         "/uapi/domestic-stock/v1/trading/order-rvsecncl",
         {
-            **_account_params(kis),
+            **kis.account_params,
             "KRX_FWDG_ORD_ORGNO": "",
             "ORGN_ODNO": order_no,
             "ORD_DVSN": "00",
@@ -113,7 +109,7 @@ def balance(kis: KIS) -> dict:
     return kis.get(
         "/uapi/domestic-stock/v1/trading/inquire-balance",
         {
-            **_account_params(kis),
+            **kis.account_params,
             "AFHR_FLPR_YN": "N",
             "OFL_YN": "",
             "INQR_DVSN": "02",
@@ -140,7 +136,7 @@ def orders(kis: KIS, start_date: str = "", end_date: str = "") -> list[dict]:
     result = kis.get(
         "/uapi/domestic-stock/v1/trading/inquire-daily-ccld",
         {
-            **_account_params(kis),
+            **kis.account_params,
             "INQR_STRT_DT": start_date or today,
             "INQR_END_DT": end_date or today,
             "SLL_BUY_DVSN_CD": "00",
@@ -164,7 +160,7 @@ def pending_orders(kis: KIS) -> list[dict]:
     result = kis.get(
         "/uapi/domestic-stock/v1/trading/inquire-psbl-rvsecncl",
         {
-            **_account_params(kis),
+            **kis.account_params,
             "INQR_DVSN_1": "0",
             "INQR_DVSN_2": "0",
             "CTX_AREA_FK100": "",
@@ -198,10 +194,10 @@ def position(kis: KIS, symbol: str) -> dict | None:
 
 def sell_all(kis: KIS, symbol: str) -> dict:
     """종목 전량 매도 (시장가)"""
-    p = next((p for p in positions(kis) if p["pdno"] == symbol), None)
-    if not p or int(p["hldg_qty"]) == 0:
+    p = position(kis, symbol)
+    if not p or p["qty"] == 0:
         raise ValueError(f"No position for {symbol}")
-    return sell(kis, symbol, qty=int(p["hldg_qty"]))
+    return sell(kis, symbol, qty=p["qty"])
 
 
 def cancel_remaining(kis: KIS, order_no: str) -> dict:
@@ -209,7 +205,7 @@ def cancel_remaining(kis: KIS, order_no: str) -> dict:
     return kis.post(
         "/uapi/domestic-stock/v1/trading/order-rvsecncl",
         {
-            **_account_params(kis),
+            **kis.account_params,
             "KRX_FWDG_ORD_ORGNO": "",
             "ORGN_ODNO": order_no,
             "ORD_DVSN": "00",

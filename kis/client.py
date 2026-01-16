@@ -21,6 +21,10 @@ class KIS:
     def is_paper(self) -> bool:
         return self.env == "paper"
 
+    @property
+    def account_params(self) -> dict:
+        return {"CANO": self.account[:8], "ACNT_PRDT_CD": self.account[9:11]}
+
     def switch(self, env: Env) -> "KIS":
         return KIS(self.app_key, self.app_secret, self.account, env)
 
