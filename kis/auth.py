@@ -37,3 +37,40 @@ def get_ws_key(app_key: str, app_secret: str, env: Env = "prod") -> str:
         f"{_base_url(env)}/oauth2/Approval",
         json={"grant_type": "client_credentials", "appkey": app_key, "secretkey": app_secret},
     ).raise_for_status().json()["approval_key"]
+
+
+# === Async 버전 ===
+_async_client: httpx.AsyncClient | None = None
+
+
+async def _get_async_client() -> httpx.AsyncClient:
+    global _async_client
+    if _async_client is None:
+        _async_client = httpx.AsyncClient()
+    return _async_client
+
+
+async def _issue_token_async(app_key: str, app_secret: str, env: Env) -> tuple[str, float]:
+    """Issue new access token asynchronously."""
+    data = (await (await _get_async_client()).post(
+        f"{_base_url(env)}/oauth2/tokenP",
+        json={"grant_type": "client_credentials", "appkey": app_key, "appsecret": app_secret},
+    )).raise_for_status().json()
+    return data["access_token"], time.time() + data["expires_in"] - 60
+
+
+async def get_token_async(app_key: str, app_secret: str, env: Env = "prod") -> str:
+    """Return cached token or issue new one (async)."""
+    key = (env, app_key)
+    if key in _tokens and _tokens[key][1] > time.time() + 60:
+        return _tokens[key][0]
+    _tokens[key] = await _issue_token_async(app_key, app_secret, env)
+    return _tokens[key][0]
+
+
+async def get_ws_key_async(app_key: str, app_secret: str, env: Env = "prod") -> str:
+    """Get WebSocket approval key (async)."""
+    return (await (await _get_async_client()).post(
+        f"{_base_url(env)}/oauth2/Approval",
+        json={"grant_type": "client_credentials", "appkey": app_key, "secretkey": app_secret},
+    )).raise_for_status().json()["approval_key"]

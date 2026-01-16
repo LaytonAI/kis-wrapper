@@ -1,7 +1,8 @@
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 from kis import calc, domestic, overseas, snapshot
-from kis.auth import Env, get_token, get_ws_key
+from kis.async_client import AsyncKIS
+from kis.auth import Env, get_token, get_token_async, get_ws_key, get_ws_key_async
 from kis.client import KIS
 from kis.errors import (
     AccessDeniedError,
@@ -22,7 +23,9 @@ from kis.ws import WSClient
 
 __all__ = [
     # Core
-    "KIS", "Env", "Exchange", "get_token", "get_ws_key", "WSClient",
+    "KIS", "AsyncKIS", "Env", "Exchange",
+    "get_token", "get_token_async", "get_ws_key", "get_ws_key_async",
+    "WSClient",
     # Modules
     "domestic", "overseas", "calc", "snapshot",
     # Errors - Gateway (EGW)

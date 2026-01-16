@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0] - 2025-01-16
+
+### Added
+- **Async 지원**
+  - `AsyncKIS` 클라이언트 클래스
+  - `get_token_async`, `get_ws_key_async` 함수
+  - 기존 `domestic`, `overseas` 모듈과 호환 (Duck typing)
+  - 병렬 요청 지원 (`asyncio.gather`)
+
+### Usage
+```python
+from kis import AsyncKIS, domestic
+
+async with AsyncKIS(app_key, app_secret, account) as kis:
+    result = await domestic.price(kis, "005930")
+```
+
 ## [0.2.0] - 2025-01-16
 
 ### Added
