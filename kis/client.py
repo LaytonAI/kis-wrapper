@@ -9,21 +9,10 @@ from kis.errors import RateLimitError, raise_for_code
 class KIS:
     __slots__ = ("app_key", "app_secret", "account", "env", "max_retries", "retry_delay", "_client")
 
-    def __init__(
-        self,
-        app_key: str,
-        app_secret: str,
-        account: str,
-        env: Env = "paper",
-        max_retries: int = 3,
-        retry_delay: float = 1.0,
-    ):
-        self.app_key = app_key
-        self.app_secret = app_secret
-        self.account = account
-        self.env = env
-        self.max_retries = max_retries
-        self.retry_delay = retry_delay
+    def __init__(self, app_key: str, app_secret: str, account: str, env: Env = "paper",
+                 max_retries: int = 3, retry_delay: float = 1.0):
+        self.app_key, self.app_secret, self.account = app_key, app_secret, account
+        self.env, self.max_retries, self.retry_delay = env, max_retries, retry_delay
         self._client = httpx.Client(base_url=_base_url(env), timeout=10.0)
 
     @property
@@ -40,29 +29,24 @@ class KIS:
     def _headers(self, tr_id: str) -> dict:
         return {
             "authorization": f"Bearer {get_token(self.app_key, self.app_secret, self.env)}",
-            "appkey": self.app_key,
-            "appsecret": self.app_secret,
-            "tr_id": tr_id,
-            "content-type": "application/json; charset=utf-8",
+            "appkey": self.app_key, "appsecret": self.app_secret,
+            "tr_id": tr_id, "content-type": "application/json; charset=utf-8",
         }
 
     def _request(self, method: str, path: str, tr_id: str, **kwargs) -> dict:
         for attempt in range(self.max_retries + 1):
             resp = getattr(self._client, method)(path, headers=self._headers(tr_id), **kwargs)
-
             if resp.status_code == 429:
                 if attempt == self.max_retries:
                     raise RateLimitError("429", "API 호출 한도 초과")
-                delay = float(resp.headers.get("Retry-After", self.retry_delay * (2**attempt)))
-                time.sleep(delay)
+                time.sleep(float(resp.headers.get("Retry-After", self.retry_delay * (2**attempt))))
                 continue
-
             resp.raise_for_status()
             data = resp.json()
             if data.get("rt_cd") != "0":
                 raise_for_code(data.get("msg_cd", "UNKNOWN"), data.get("msg1", "Unknown error"))
             return data.get("output", data)
-        raise RateLimitError("429", "API 호출 한도 초과")  # unreachable
+        raise RateLimitError("429", "API 호출 한도 초과")
 
     def get(self, path: str, params: dict, tr_id: str) -> dict:
         return self._request("get", path, tr_id, params=params)

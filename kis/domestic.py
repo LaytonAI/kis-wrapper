@@ -5,7 +5,7 @@ from datetime import date
 from kis.client import KIS
 
 
-def _tr_id(kis: KIS, paper: str, real: str) -> str:
+def _tr(kis: KIS, paper: str, real: str) -> str:
     return paper if kis.is_paper else real
 
 
@@ -59,7 +59,7 @@ def _order(kis: KIS, symbol: str, qty: int, price: int | None, tr_paper: str, tr
             "ORD_QTY": str(qty),
             "ORD_UNPR": str(price or 0),
         },
-        _tr_id(kis, tr_paper, tr_real),
+        _tr(kis, tr_paper, tr_real),
     )
 
 
@@ -87,7 +87,7 @@ def _revise_cancel(kis: KIS, order_no: str, qty: int, price: int, dvsn_cd: str) 
             "ORD_UNPR": str(price),
             "QTY_ALL_ORD_YN": "N",
         },
-        _tr_id(kis, "VTTC0803U", "TTTC0803U"),
+        _tr(kis, "VTTC0803U", "TTTC0803U"),
     )
 
 
@@ -120,7 +120,7 @@ def balance(kis: KIS) -> dict:
             "CTX_AREA_FK100": "",
             "CTX_AREA_NK100": "",
         },
-        _tr_id(kis, "VTTC8434R", "TTTC8434R"),
+        _tr(kis, "VTTC8434R", "TTTC8434R"),
     )
 
 
@@ -150,7 +150,7 @@ def orders(kis: KIS, start_date: str = "", end_date: str = "") -> list[dict]:
             "CTX_AREA_FK100": "",
             "CTX_AREA_NK100": "",
         },
-        _tr_id(kis, "VTTC8001R", "TTTC8001R"),
+        _tr(kis, "VTTC8001R", "TTTC8001R"),
     )
     return result if isinstance(result, list) else []
 
@@ -166,7 +166,7 @@ def pending_orders(kis: KIS) -> list[dict]:
             "CTX_AREA_FK100": "",
             "CTX_AREA_NK100": "",
         },
-        _tr_id(kis, "VTTC8036R", "TTTC8036R"),
+        _tr(kis, "VTTC8036R", "TTTC8036R"),
     )
     return result if isinstance(result, list) else []
 
@@ -177,18 +177,12 @@ def pending_orders(kis: KIS) -> list[dict]:
 def position(kis: KIS, symbol: str) -> dict | None:
     """종목별 포지션 조회 (미보유 시 None)"""
     p = next((p for p in positions(kis) if p["pdno"] == symbol), None)
-    if not p:
-        return None
+    if not p: return None
     return {
-        "symbol": symbol,
-        "name": p["prdt_name"],
-        "qty": int(p["hldg_qty"]),
-        "avg_price": int(float(p["pchs_avg_pric"])),
-        "current_price": int(p["prpr"]),
-        "total_cost": int(p["pchs_amt"]),
-        "eval_amount": int(p["evlu_amt"]),
-        "profit": int(p["evlu_pfls_amt"]),
-        "profit_rate": float(p["evlu_pfls_rt"]),
+        "symbol": symbol, "name": p["prdt_name"], "qty": int(p["hldg_qty"]),
+        "avg_price": int(float(p["pchs_avg_pric"])), "current_price": int(p["prpr"]),
+        "total_cost": int(p["pchs_amt"]), "eval_amount": int(p["evlu_amt"]),
+        "profit": int(p["evlu_pfls_amt"]), "profit_rate": float(p["evlu_pfls_rt"]),
     }
 
 
@@ -214,5 +208,5 @@ def cancel_remaining(kis: KIS, order_no: str) -> dict:
             "ORD_UNPR": "0",
             "QTY_ALL_ORD_YN": "Y",
         },
-        _tr_id(kis, "VTTC0803U", "TTTC0803U"),
+        _tr(kis, "VTTC0803U", "TTTC0803U"),
     )

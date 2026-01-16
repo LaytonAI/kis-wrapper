@@ -3,55 +3,18 @@
 
 class KISError(Exception):
     """KIS API 에러 기본 클래스"""
-
     def __init__(self, code: str, message: str):
-        self.code = code
-        self.message = message
+        self.code, self.message = code, message
         super().__init__(f"[{code}] {message}")
 
 
-# HTTP 에러
-class RateLimitError(KISError):
-    """429 Too Many Requests - API 호출 한도 초과"""
-
-    pass
-
-
-class AuthError(KISError):
-    """인증 관련 에러"""
-
-    pass
-
-
-class TokenExpiredError(AuthError):
-    """토큰 만료"""
-
-    pass
-
-
-# 비즈니스 에러
-class OrderError(KISError):
-    """주문 관련 에러"""
-
-    pass
-
-
-class SymbolError(KISError):
-    """종목코드 오류"""
-
-    pass
-
-
-class MarketClosedError(KISError):
-    """장 마감 시간"""
-
-    pass
-
-
-class InsufficientBalanceError(KISError):
-    """잔고 부족"""
-
-    pass
+class RateLimitError(KISError): pass
+class AuthError(KISError): pass
+class TokenExpiredError(AuthError): pass
+class OrderError(KISError): pass
+class SymbolError(KISError): pass
+class MarketClosedError(KISError): pass
+class InsufficientBalanceError(KISError): pass
 
 
 # 에러코드 매핑 (KIS API msg_cd -> 에러 클래스)

@@ -24,23 +24,23 @@ def mock_token():
 
 
 def test_buy_tr_id_for_nasdaq():
-    assert overseas._tr_id("buy", "NAS", False) == "JTTT1002U"
-    assert overseas._tr_id("buy", "NAS", True) == "JTTT1002U"  # 미국은 동일
+    assert overseas._tr("buy", "NAS", False) == "JTTT1002U"
+    assert overseas._tr("buy", "NAS", True) == "JTTT1002U"  # 미국은 동일
 
 
 def test_buy_tr_id_for_hongkong():
-    assert overseas._tr_id("buy", "HKS", False) == "TTTS1002U"
-    assert overseas._tr_id("buy", "HKS", True) == "VTTS1002U"  # 모의투자
+    assert overseas._tr("buy", "HKS", False) == "TTTS1002U"
+    assert overseas._tr("buy", "HKS", True) == "VTTS1002U"  # 모의투자
 
 
 def test_sell_tr_id_for_nasdaq():
-    assert overseas._tr_id("sell", "NAS", False) == "JTTT1006U"
-    assert overseas._tr_id("sell", "NAS", True) == "JTTT1006U"
+    assert overseas._tr("sell", "NAS", False) == "JTTT1006U"
+    assert overseas._tr("sell", "NAS", True) == "JTTT1006U"
 
 
 def test_sell_tr_id_for_tokyo():
-    assert overseas._tr_id("sell", "TSE", False) == "TTTS0307U"
-    assert overseas._tr_id("sell", "TSE", True) == "VTTS0307U"
+    assert overseas._tr("sell", "TSE", False) == "TTTS0307U"
+    assert overseas._tr("sell", "TSE", True) == "VTTS0307U"
 
 
 # === 시세 조회 테스트 ===
