@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from kis import overseas
-from kis.client import APIError
+from kis.errors import KISError
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -67,9 +67,9 @@ def test_price_sends_correct_params(kis, httpx_mock):
 
 
 def test_price_with_invalid_symbol_raises_error(kis, httpx_mock):
-    httpx_mock.add_response(json={"rt_cd": "1", "msg1": "종목코드 오류"})
+    httpx_mock.add_response(json={"rt_cd": "1", "msg_cd": "APBK0013", "msg1": "종목코드 오류"})
 
-    with pytest.raises(APIError, match="종목코드 오류"):
+    with pytest.raises(KISError, match="종목코드 오류"):
         overseas.price(kis, "INVALID", "NAS")
 
 
@@ -202,3 +202,116 @@ def test_exchange_rate_uses_paper_tr_id(kis, httpx_mock):
     overseas.exchange_rate(kis)
 
     assert httpx_mock.get_request().headers["tr_id"] == "VTRP6504R"
+
+
+# === 호가 조회 테스트 ===
+
+
+def test_orderbook_returns_data(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": {"askp1": "150.30", "bidp1": "150.20"}})
+
+    result = overseas.orderbook(kis, "AAPL", "NAS")
+
+    assert result["askp1"] == "150.30"
+    request = httpx_mock.get_request()
+    assert "SYMB=AAPL" in str(request.url)
+    assert request.headers["tr_id"] == "HHDFS76200200"
+
+
+# === 주문 정정 테스트 ===
+
+
+def test_modify_order(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("overseas_order.json")})
+
+    overseas.modify(kis, "NAS", "0000123456", qty=5, price=160.0)
+
+    body = json.loads(httpx_mock.get_request().content)
+    assert body["ORGN_ODNO"] == "0000123456"
+    assert body["RVSE_CNCL_DVSN_CD"] == "01"  # 정정
+    assert body["ORD_QTY"] == "5"
+    assert body["OVRS_ORD_UNPR"] == "160.0"
+
+
+def test_modify_uses_paper_tr_id(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("overseas_order.json")})
+
+    overseas.modify(kis, "NAS", "0000123456", qty=5, price=160.0)
+
+    assert httpx_mock.get_request().headers["tr_id"] == "VTTT1004U"
+
+
+# === 체결내역/미체결 테스트 ===
+
+
+def test_orders_returns_list(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": [{"odno": "123"}, {"odno": "456"}]})
+
+    result = overseas.orders(kis)
+
+    assert len(result) == 2
+    assert httpx_mock.get_request().headers["tr_id"] == "VTTS3035R"
+
+
+def test_orders_returns_empty_on_dict_output(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": {"output": []}})
+
+    result = overseas.orders(kis)
+
+    assert result == []
+
+
+def test_pending_orders_returns_list(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": [{"odno": "789"}]})
+
+    result = overseas.pending_orders(kis, exchange="NAS")
+
+    assert len(result) == 1
+    assert httpx_mock.get_request().headers["tr_id"] == "VTTS3018R"
+
+
+# === 포지션 관리 테스트 ===
+
+
+def test_positions_returns_list(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("overseas_balance.json")})
+
+    result = overseas.positions(kis)
+
+    assert len(result) == 1
+    assert result[0]["ovrs_pdno"] == "AAPL"
+
+
+def test_position_returns_matching(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("overseas_balance.json")})
+
+    result = overseas.position(kis, "AAPL", "NAS")
+
+    assert result["ovrs_pdno"] == "AAPL"
+
+
+def test_position_returns_none_for_no_match(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("overseas_balance.json")})
+
+    result = overseas.position(kis, "TSLA", "NAS")
+
+    assert result is None
+
+
+def test_sell_all_sells_full_qty(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("overseas_balance.json")})
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("overseas_order.json")})
+
+    result = overseas.sell_all(kis, "AAPL", "NAS")
+
+    assert result is not None
+    body = json.loads(httpx_mock.get_requests()[-1].content)
+    assert body["ORD_QTY"] == "10"  # from fixture: ovrs_cblc_qty
+
+
+def test_sell_all_returns_none_if_no_position(kis, httpx_mock):
+    httpx_mock.add_response(json={"rt_cd": "0", "output": load_fixture("overseas_balance.json")})
+
+    result = overseas.sell_all(kis, "TSLA", "NAS")
+
+    assert result is None

@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from kis import domestic
-from kis.client import APIError
+from kis.errors import KISError
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -34,9 +34,9 @@ def test_price_returns_required_fields(kis, httpx_mock):
 
 
 def test_price_with_invalid_symbol_raises_error(kis, httpx_mock):
-    httpx_mock.add_response(json={"rt_cd": "1", "msg1": "종목코드 오류"})
+    httpx_mock.add_response(json={"rt_cd": "1", "msg_cd": "APBK0013", "msg1": "종목코드 오류"})
 
-    with pytest.raises(APIError, match="종목코드 오류"):
+    with pytest.raises(KISError, match="종목코드 오류"):
         domestic.price(kis, "INVALID")
 
 

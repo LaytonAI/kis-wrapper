@@ -131,3 +131,80 @@ def exchange_rate(kis: KIS) -> dict:
     params = {**kis.account_params}
     tr_id = "VTRP6504R" if kis.is_paper else "CTRP6504R"
     return kis.get("/uapi/overseas-stock/v1/trading/inquire-present-balance", params, tr_id)
+
+
+def orderbook(kis: KIS, symbol: str, exchange: Exchange) -> dict:
+    """해외주식 호가 조회"""
+    return kis.get(
+        "/uapi/overseas-price/v1/quotations/inquire-asking-price",
+        {"AUTH": "", "EXCD": exchange, "SYMB": symbol},
+        "HHDFS76200200",
+    )
+
+
+def modify(kis: KIS, exchange: Exchange, order_no: str, qty: int, price: float) -> dict:
+    """해외주식 주문 정정"""
+    body = {
+        **kis.account_params,
+        "OVRS_EXCG_CD": exchange,
+        "ORGN_ODNO": order_no,
+        "RVSE_CNCL_DVSN_CD": "01",  # 정정
+        "ORD_QTY": str(qty),
+        "OVRS_ORD_UNPR": str(price),
+    }
+    tr_id = "VTTT1004U" if kis.is_paper else "TTTT1004U"
+    return kis.post("/uapi/overseas-stock/v1/trading/order-rvsecncl", body, tr_id)
+
+
+def orders(kis: KIS, exchange: Exchange | None = None) -> list:
+    """해외주식 체결내역 조회"""
+    params = {
+        **kis.account_params,
+        "OVRS_EXCG_CD": exchange or "",
+        "SORT_SQN": "DS",
+        "CTX_AREA_FK200": "",
+        "CTX_AREA_NK200": "",
+    }
+    tr_id = "VTTS3035R" if kis.is_paper else "TTTS3035R"
+    result = kis.get("/uapi/overseas-stock/v1/trading/inquire-ccnl", params, tr_id)
+    return result if isinstance(result, list) else result.get("output", [])
+
+
+def pending_orders(kis: KIS, exchange: Exchange | None = None) -> list:
+    """해외주식 미체결 조회"""
+    params = {
+        **kis.account_params,
+        "OVRS_EXCG_CD": exchange or "",
+        "SORT_SQN": "DS",
+        "CTX_AREA_FK200": "",
+        "CTX_AREA_NK200": "",
+    }
+    tr_id = "VTTS3018R" if kis.is_paper else "TTTS3018R"
+    result = kis.get("/uapi/overseas-stock/v1/trading/inquire-nccs", params, tr_id)
+    return result if isinstance(result, list) else result.get("output", [])
+
+
+# === 포지션 관리 ===
+
+
+def positions(kis: KIS, exchange: Exchange | None = None) -> list:
+    """보유종목 리스트"""
+    result = balance(kis, exchange)
+    return result.get("output1", []) if isinstance(result, dict) else []
+
+
+def position(kis: KIS, symbol: str, exchange: Exchange) -> dict | None:
+    """특정 종목 포지션"""
+    for p in positions(kis, exchange):
+        if p.get("ovrs_pdno") == symbol:
+            return p
+    return None
+
+
+def sell_all(kis: KIS, symbol: str, exchange: Exchange) -> dict | None:
+    """전량 매도"""
+    pos = position(kis, symbol, exchange)
+    if not pos: return None
+    qty = int(pos.get("ovrs_cblc_qty", 0))
+    if qty <= 0: return None
+    return sell(kis, symbol, exchange, qty)
