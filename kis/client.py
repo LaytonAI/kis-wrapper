@@ -11,6 +11,8 @@ def _parse_response(resp: httpx.Response) -> dict:
     data = resp.json()
     if data.get("rt_cd") != "0":
         raise_for_code(data.get("msg_cd", "UNKNOWN"), data.get("msg1", "Unknown error"))
+    if "output1" in data and "output2" in data:
+        return data
     return data.get("output") or data.get("output1") or data
 
 
